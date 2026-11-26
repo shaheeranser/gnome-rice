@@ -50,6 +50,8 @@ Not shipped, install from your distro or [extensions.gnome.org](https://extensio
 
 The installer warns when something it enables is missing; it never fails on that.
 
+**Load order.** The shell enables extensions in list order at login. Just Perfection must be listed before Dash to Dock, otherwise it errors at startup (`showAppsButton.connect is not a function`). The installer keeps that order and keeps the position of anything already enabled.
+
 ## Notes and limits
 
 - **Global menu coverage.** Orbit builds menus from keyboard shortcuts for about 290 apps. Apps that publish a real menu (GTK menubar apps, LibreOffice) show it. Qt, Electron, Chromium and Firefox only do so under XWayland with Orbit's optional companion daemon, which this repo does not install. Apps without a menu just show the generic window menu.

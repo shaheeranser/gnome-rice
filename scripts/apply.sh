@@ -27,8 +27,16 @@ set_ext() { # enable|disable <uuid>, edits the list without needing the shell to
 import ast, subprocess, sys
 act, u = sys.argv[1:]
 cur = subprocess.check_output(["gsettings", "get", "org.gnome.shell", "enabled-extensions"], text=True).strip()
-l = [x for x in ast.literal_eval(cur.removeprefix("@as ")) if x != u]
-if act == "enable": l.append(u)
+l = ast.literal_eval(cur.removeprefix("@as "))
+# Order matters: the shell enables extensions in list order at login. Just Perfection must come before Dash to Dock
+# (the dock swaps in a placeholder dash during startup that Just Perfection cannot connect to).
+BEFORE = {"just-perfection-desktop@just-perfection": "dash-to-dock@micxgx.gmail.com"}
+if act == "disable":
+    l = [x for x in l if x != u]
+elif u not in l:                          # already enabled: keep its position
+    anchor = BEFORE.get(u)
+    if anchor in l: l.insert(l.index(anchor), u)
+    else: l.append(u)
 subprocess.check_call(["gsettings", "set", "org.gnome.shell", "enabled-extensions", repr(l)])
 PY
 }
